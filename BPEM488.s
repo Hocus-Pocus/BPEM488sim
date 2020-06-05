@@ -343,7 +343,8 @@ base512        equ $01 ; %00000001, bit 0, 0 = 5.12uS time base off(White),
                                          ; 1 = 5.12uS time base on(Grn)
 base256        equ $02 ; %00000010, bit 1, 0 = 2.56uS time base off(White),
                                          ; 1 = 2.56uS time base on(Grn)
-eng2Bit2       equ $04 ; %00000100, bit 2, 0 = , 1 = 
+AudAlrm        equ $04 ; %00000100, bit 2, 0 = Audible Alarm on(Grn),
+                                         ; 1 = Audible Alarm off(Red) 
 eng2Bit3       equ $08 ; %00001000, bit 3, 0 = , 1 = 
 eng2Bit4       equ $10 ; %00010000, bit 4, 0 = , 1 = 
 eng2Bit5       equ $20 ; %00100000, bit 5, 0 = , 1 = 
@@ -449,11 +450,9 @@ D2on29to56  equ  $80 ;(PB7)%10000000, bit 7
 XIRQpin      equ  $01  ;(PE0)%00000001, bit 0, XIRQ
 IRQpin       equ  $02  ;(PE1)%00000010, bit 1, IRQ
 SDcard       equ  $04  ;(PE2)%00000100, bit 2, SD card detect
-AudAlrmSil   equ  $08  ;(PE3)%00001000, bit 3, SW5on29to56, 0 = No Audible Alarm Silence
-                                                           ; 1 = Audible Alarm Silence  
-SendDateTime equ  $10  ;(PE4)%00010000, bit 4, SW2on29to56,
-                                                   ;0 = Send Date Time not enabled(Grn),
-                                                   ;1 = Send Date Time enabled(Red)
+SW5on29to56  equ  $08  ;(PE3)%00001000, bit 3, SW5on29to56
+AudAlrmSil   equ  $10  ;(PE4)%00010000, bit 4, SW2on29to56, 0 = No Audible Alarm Silence
+                                                        ; 1 = Audible Alarm Silence  
 SW4on29to56  equ  $20  ;(PE5)%00100000, bit 5,(MODA) (hard wired to ground)
 SW1on29to56  equ  $40  ;(PE6)%01000000, bit 6,(MODB)( hard wired to ground)
 SW6on29to56  equ  $80  ;(PE7)%10000000, bit 7,
@@ -1011,7 +1010,7 @@ MainLoop:
 ;*****************************************************************************************
 
 CheckFtrim:
-   brclr PORTA,Ftrimen,FtrimOn ; If "Ftrimen"(PA3)pin of PORTA is low, branch to FtrimOn:
+   brclr PORTA,PA3,FtrimOn     ; If "Ftrimen"(PA3)pin of PORTA is low, branch to FtrimOn:
                                ; (switch is on)
    bra  Ftrimoff               ; Branch to Ftrimoff: (Pin must be high) (Switch is off)
    
@@ -1023,7 +1022,7 @@ Ftrimoff:
    bclr PortAbits,Ftrimen      ; Clear "Ftrimen"(bit3) of "PortAbits"
 
 CheckItrim:   
-   brclr PORTA,Itrimen,ItrimOn ; If "Itrimen"(PA4)pin of PORTA is low, branch to ItrimOn:
+   brclr PORTA,PA4,ItrimOn     ; If "Itrimen"(PA4)pin of PORTA is low, branch to ItrimOn:
                                ; (switch is on)
    bra  Itrimoff               ; Branch to Itrimoff: (Pin must be high) (Switch is off)
    
@@ -1075,24 +1074,6 @@ TrimChkDone:
 
     CHECK_ALARMS    ; Macro in adc0BPEM488.s
 	
-;*****************************************************************************************
-; - When an engine alarm condition occurs an indicator light on the dashbord is 
-;   illuminated and  an audible alarm will sound. The alarm can be silenced by pressing 
-;   the alarm silence button on the dashboard but the light will remain illuminated until 
-;   the alarm conditionn is no longer met.
-;*****************************************************************************************
-;*****************************************************************************************
-; - If we have an audible alarm see if it should be silenced. 
-;*****************************************************************************************
-
-    ldaa  alarmbits         ; "alarmbits"-> Accu A
-    beq   NoAlarms          ; If "alarmbits" is clear branch to NoAlarms: (no alarms so 
-                            ; fall through)
-                            
-    CHECK_AUDIBLE_ALARM     ; Macro in adc0BPEM488.s
-	
-NoAlarms:
-
 ;*****************************************************************************************
 ; - Do RPM calculations when there is a new input capture period.                           
 ;*****************************************************************************************
@@ -1530,8 +1511,8 @@ dwellvolts_F:      ; 12 bytes for dwell battery correction (volts x 10)(offset =
 
 dwellcorr_F:       ; 12 bytes for dwell battery correction (% x 10)(offset = 768)($0300)
 
-    dw $0640,$04B0,$0320,$0190,$0000,$0000
-;       1600, 1200,  800,  400,    0,    0
+    dw $1388,$09B0,$0690,$0500,$03FC,$0370
+;       5000, 2480, 1680, 1280, 1020,  880
     
 tempTable1_F:      ; 20 bytes for table common temperature values (degrees C or F x 10)(offset = 780)($030C)
     dw $FE70,$FFFE,$0002,$00C8,$0190,$0258,$0320,$03E8,$0514,$0708
@@ -1726,11 +1707,11 @@ hfton_F:      ; 2 bytes for High fuel temperature alarm on set point (degF*10)(o
 hftoff_F:     ; 2 bytes for High fuel temperature alarm off set point (degF*10)(offset = 730)($02DA) 
     dw $0834  ; Decimal 2100 = 210 degF
 	
-hegton_F:      ; 2 bytes for High exhaust gas temperature alarm on set point (degF*10)(offset = 732)($02DC) 
-    dw $2EE0   ; Decimal 12000 = 1200 degF
+hegton_F:      ; 2 bytes for High exhaust gas temperature alarm on set point (degF)(offset = 732)($02DC) 
+    dw $04B0   ; Decimal 1200 = 1200 degF
 	
-hegtoff_F:     ; 2 bytes for High exhaust gas temperature alarm off set point (degF*10)(offset = 734)($02DE) 
-    dw $2AF8   ; Decimal 11000 = 1100 degF
+hegtoff_F:     ; 2 bytes for High exhaust gas temperature alarm off set point (deg)(offset = 734)($02DE) 
+    dw $044C   ; Decimal 1100 = 1100 degF
 	
 lopon_F:      ; 2 bytes for Low engine oil pressure alarm on set point (psi*10)(offset = 736)($02E0) 
     dw $0064  ; Decimal 100 = 10PSI
