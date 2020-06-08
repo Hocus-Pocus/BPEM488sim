@@ -241,7 +241,7 @@ KPH:          ds 2 ; Vehicle speed (KpH x 10)(offset=70)
 ; - Fuel calculation variables
 ;*****************************************************************************************
 
-reqFuel:      ds 2 ; Pulse width for 14.7 AFR @ 100% VE (mS x 10)(offset=72)
+Place72:      ds 2 ; Place holder(offset=72)
 AFRcurr:      ds 2 ; Current value in AFR table (AFR x 100)(offset=74) 
 VEcurr:       ds 2 ; Current value in VE table (% x 10)(offset=76) 
 barocor:      ds 2 ; Barometric Pressure Correction (% x 10)(offset=78)
@@ -264,8 +264,8 @@ FDpw:         ds 2 ; Fuel Delivery pulse width (PW - Deadband) (mS x 10)(offset=
 PW:           ds 2 ; Running engine injector pulsewidth (mS x 10)(offset=108)
 FD:           ds 2 ; Fuel Delivery pulse width (mS)(offset=110)
 FDsec:        ds 2 ; Fuel delivery pulse width total over 1 second (mS)(offset=112)
-InjDelDegx10: ds 2 ; Injection delay from trigger to start of injection (deg x 10)(offset=114)
-InjPrFlo:     ds 2 ; Pair of injectors flow rate (L/hr x 100)(offset=116)
+Place114:     ds 2 ; Place holder(offset=114)
+Place115:     ds 2 ; Place holder(offset=116)
 
 ;*****************************************************************************************
 ;*****************************************************************************************
@@ -273,7 +273,7 @@ InjPrFlo:     ds 2 ; Pair of injectors flow rate (L/hr x 100)(offset=116)
 ;*****************************************************************************************
 	 
 STcurr:         ds 2 ; Current value in ST table (Degrees x 10)(offset=118)
-Dwell:          ds 2 ; Coil on time (mS*10)(offset=120) 
+Place120:       ds 2 ; Place holder(offset=120) 
 DwellCor:       ds 2 ; Coil dwell voltage correction (%*10)(offset=122)
 DwellFin:       ds 2 ; ("Dwell" * "DwellCor") (mS*10)(offset=124)
 STandItrmx10:   ds 2 ; stCurr and Itmx10 (degrees*10)(offset=126)
@@ -514,16 +514,16 @@ CrnkSens   equ $80 ;(PT7)%10000000, bit 7, K3 Crank Sensor
 ;*****************************************************************************************
 ; - Misc variables 
 ;*****************************************************************************************
+LoopCntr:    ds 2 ; Counter for "LoopTime" (incremented every Main Loop pass)
+tmp1w:       ds 2 ; Temporary word variable #1
+tmp2w:       ds 2 ; Temporary word variable #2
+tmp3w:       ds 2 ; Temporary word variable #3
+tmp4w:       ds 2 ; Temporary word variable #4
+tmp5b:       ds 1 ; Temporary byte variable #5
+tmp6b:       ds 1 ; Temporary byte variable #6
+tmp7b:       ds 1 ; Temporary byte variable #7
+tmp8b:       ds 1 ; Temporary byte variable #8
 
-tmp1:       ds 1 ; Temporary variable #1
-tmp2:       ds 1 ; Temporary variable #2
-tmp3:       ds 1 ; Temporary variable #3
-tmp4:       ds 1 ; Temporary variable #4
-tmp5:       ds 1 ; Temporary variable #5
-tmp6:       ds 1 ; Temporary variable #6
-tmp7:       ds 1 ; Temporary variable #7
-tmp8:       ds 1 ; Temporary variable #8
-LoopCntr:   ds 2 ; Counter for "LoopTime" (incremented every Main Loop pass)
 
 ;*****************************************************************************************
 
@@ -613,7 +613,7 @@ BPEM488_SHARED_VARS_END_LIN   EQU @   ; @ Represents the current value of the li
 ; - Fuel calculation variables
 ;*****************************************************************************************
 
-   clrw reqFuel      ; Pulse width for 14.7 AFR @ 100% VE (mS x 10)(offset=72)
+   clrw Place72      ; Place holder(offset=72)
    clrw AFRcurr      ; Current value in AFR table (AFR x 100)(offset=74) 
    clrw VEcurr       ; Current value in VE table (% x 10)(offset=76) 
    clrw barocor      ; Barometric Pressure Correction (% x 10)(offset=78)
@@ -636,8 +636,8 @@ BPEM488_SHARED_VARS_END_LIN   EQU @   ; @ Represents the current value of the li
    clrw PW           ; Running engine injector pulsewidth (mS x 10)(offset=108)
    clrw FD           ; Fuel Delivery pulse width (mS)(offset=110)
    clrw FDsec        ; Fuel delivery pulse width total over 1 second (mS)(offset=112)
-   clrw InjDelDegx10 ; Injection delay from trigger to start of injection (deg x 10)(offset=114)
-   clrw InjPrFlo     ; Pair of injectors flow rate (L/hr x 100)(offset=116)
+   clrw Place114     ; Place holder(offset=114)
+   clrw Place115     ; Place holder(offset=116)
 
 ;*****************************************************************************************
 ;*****************************************************************************************
@@ -645,7 +645,7 @@ BPEM488_SHARED_VARS_END_LIN   EQU @   ; @ Represents the current value of the li
 ;*****************************************************************************************
 	 
    clrw STcurr         ; Current value in ST table (Degrees x 10)(offset=118)
-   clrw Dwell          ; Coil on time (mS*10)(offset=120) 
+   clrw Place120       ; Place holder(offset=120) 
    clrw DwellCor       ; Coil dwell voltage correction (%*10)(offset=122)
    clrw DwellFin       ; ("Dwell" * "DwellCor") (mS*10)(offset=124)
    clrw STandItrmx10   ; stCurr and Itmx10 (degrees*10)(offset=126)
@@ -682,15 +682,16 @@ BPEM488_SHARED_VARS_END_LIN   EQU @   ; @ Represents the current value of the li
 ; - Clear other variables - 
 ;*****************************************************************************************
 
-   clr  tmp1       ; Temporary variable #1
-   clr  tmp2       ; Temporary variable #2
-   clr  tmp3       ; Temporary variable #3
-   clr  tmp4       ; Temporary variable #4
-   clr  tmp5       ; Temporary variable #5
-   clr  tmp6       ; Temporary variable #6
-   clr  tmp7       ; Temporary variable #7
-   clr  tmp8       ; Temporary variable #8
-   clrw LoopCntr   ; Counter for "LoopTime" (incremented every Main Loop pass)
+   clrw LoopCntr    ; Counter for "LoopTime" (incremented every Main Loop pass)
+   clr  tmp1w       ; Temporary word variable #1
+   clr  tmp2w       ; Temporary word variable #2
+   clr  tmp3w       ; Temporary word variable #3
+   clr  tmp4w       ; Temporary word variable #4
+   clr  tmp5b       ; Temporary byte variable #5
+   clr  tmp6b       ; Temporary byte variable #6
+   clr  tmp7b       ; Temporary byte variable #7
+   clr  tmp8b       ; Temporary byte variable #8
+
 
 ;*****************************************************************************************
 ; - Initialize other variables -
@@ -1005,36 +1006,6 @@ MainLoop:
 
     Run_ATD0    ;(Macro in adc0_BPEM488.s)
 	
-;*****************************************************************************************
-; - Pole Port A to see if Fuel Trim and or Ignition Trim have been enabled.
-;*****************************************************************************************
-
-CheckFtrim:
-   brclr PORTA,PA3,FtrimOn     ; If "Ftrimen"(PA3)pin of PORTA is low, branch to FtrimOn:
-                               ; (switch is on)
-   bra  Ftrimoff               ; Branch to Ftrimoff: (Pin must be high) (Switch is off)
-   
-FtrimOn:
-   bset PortAbits,Ftrimen      ; Set "Ftrimen"(bit3) of "PortAbits"
-   bra  CheckItrim             ; Branch to CheckItrim:
-
-Ftrimoff:
-   bclr PortAbits,Ftrimen      ; Clear "Ftrimen"(bit3) of "PortAbits"
-
-CheckItrim:   
-   brclr PORTA,PA4,ItrimOn     ; If "Itrimen"(PA4)pin of PORTA is low, branch to ItrimOn:
-                               ; (switch is on)
-   bra  Itrimoff               ; Branch to Itrimoff: (Pin must be high) (Switch is off)
-   
-ItrimOn:
-   bset PortAbits,Itrimen      ; Set "Itrimen"(bit4) of "PortAbits"
-   bra  TrimChkDone            ; Branch to TrimChkDone:
-
-Itrimoff:
-   bclr PortAbits,Itrimen      ; Clear "Itrimen"(bit4) of "PortAbits"
-   
-TrimChkDone:
-   
 ;*****************************************************************************************
 ; - Convert ADC values to user units -
 ;*****************************************************************************************
@@ -1558,7 +1529,7 @@ TOErates_F:        ; 8 bytes for Throttle Opening Enrichment rate (TpsPctDOT x 1
     dw $01F4,$03E8,$09C4,$1388
 ;        500, 1000, 2500, 5000
 
-DdBndBase_F:       ; 2 bytes for injector deadband at 13.2V (mSec * 10)(offset = 972)($03CC)
+DdBndBase_F:       ; 2 bytes for injector deadband at 13.2V (mSec * 100)(offset = 972)($03CC)
     dw $005A       ; 90 = .9mS
     
 DdBndCor_F:        ; 2 bytes for injector deadband voltage correction (mSec/V x 100)(offset = 974)($03CE)
@@ -1730,10 +1701,19 @@ lfpon_F:      ; 2 bytes for Low fuel pressure alarm on set point (psi*10)(offset
 	
 lfpoff_F:     ; 2 bytes for Low fuel pressure alarm off set point (psi*10)(offset = 746)($02EA)
     dw $0190  ; Decimal 400 = 40PSI
+    
+Dwell_F       ; 2 bytes for run mode dwell time (mSec*10)(offset = 748)($02EC)
+   dw $0028   ; 40 = 4.0mSec
+
+CrnkDwell_F   ; 2 bytes for crank mode dwell time (mSec*10)(offset = 750)($02EE)
+   dw $003C   ; 60 = 6.0 mSec
+
+CrnkAdv_F     ; 2 bytes for crank mode ignition advance (Deg*10)(offset = 752)($02F0)
+   dw $0064   ; 100 = 10.0 degrees   
 
 
 
-; 750 bytes used, 1024 - 750 = 274 bytes left
+; 752 + 2 = 754 bytes used, 1024 - 754 = 270 bytes left
 
 ;*********************************************************************
 ; Page 3 copied into RAM on start up. All pages 1024 bytes
